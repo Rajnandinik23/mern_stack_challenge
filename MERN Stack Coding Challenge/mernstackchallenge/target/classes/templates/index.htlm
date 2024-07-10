@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Dashboard</title>
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <h1>Transaction Dashboard</h1>
+    <div>
+        <label for="month-select">Select Month:</label>
+        <select id="month-select">
+            <option value="JANUARY">January</option>
+            <option value="FEBRUARY">February</option>
+            <option value="MARCH" selected>March</option>
+            <!-- Add other months -->
+        </select>
+    </div>
+    <div>
+        <label for="search-box">Search:</label>
+        <input type="text" id="search-box">
+    </div>
+    <div>
+        <button id="prev-page">Previous</button>
+        <button id="next-page">Next</button>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Date of Sale</th>
+                <th>Category</th>
+                <th>Sold</th>
+            </tr>
+        </thead>
+        <tbody id="transaction-table-body">
+            <!-- Transaction rows will be inserted here -->
+        </tbody>
+    </table>
+    <div id="statistics">
+        <!-- Display statistics here -->
+    </div>
+    <div id="bar-chart">
+        <!-- Display bar chart here -->
+    </div>
+    <div id="pie-chart">
+        <!-- Display pie chart here -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const monthSelect = document.getElementById('month-select');
+            const searchBox = document.getElementById('search-box');
+            const prevPageButton = document.getElementById('prev-page');
+            const nextPageButton = document.getElementById('next-page');
+            const transactionTableBody = document.getElementById('transaction-table-body');
+            const statisticsDiv = document.getElementById('statistics');
+            const barChartDiv = document.getElementById('bar-chart');
+            const pieChartDiv = document.getElementById('pie-chart');
+            let currentPage = 1;
+
+            function fetchTransactions() {
+                const month = monthSelect.value;
+                const query = searchBox.value;
+                const url = query ? `/api/transactions/search?query=${query}` : `/api/transactions?month=${month}&page=${currentPage}`;
+                fetch(url)
+                    .then(response => response.json())
+                    .then(transactions => {
+                        transactionTableBody.innerHTML = '';
+                        transactions.forEach(transaction => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${transaction.title}</td>
+                                <td>${transaction.description}</td>
+                                <td>${transaction.price}</td>
+                                <td>${transaction.dateOfSale}</td>
+                                <td>${transaction.category}</td>
+                                <td>${transaction.isSold}</td>
+                            `;
+                            transactionTableBody.appendChild(row);
+                        });
+                    });
+            }
+
+            function fetchStatistics() {
+                const month = monthSelect.value;
+                fetch(`/api/transactions/statistics?month=${month}`)
+                    .then(response => response.json())
+                    .then(stats => {
+                        statisticsDiv.innerHTML = `
+                            <p>Total Sale Amount: ${stats.totalSaleAmount}</p>
+                            <p>Total Sold Items: ${stats.totalSoldItems}</p>
+                            <p>Total Not Sold Items: ${stats.totalNotSoldItems}</p>
+                        `;
+                    });
+            }
+
+            function fetchBarChart() }
